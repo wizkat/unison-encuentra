@@ -1,17 +1,22 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Pressable, Text, View } from 'react-native'
+import { useSession } from '../providers/session-provider'
 
-export default function Index() {
+export default function Home() {
+  const { session, signOut } = useSession()
+
   return (
-    <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
-    </View>
-  );
-}
+    <View className="flex-1 gap-4 p-6">
+      <Text className="text-xl font-semibold">
+        Hola, {session?.user.displayName}
+      </Text>
+      <Text className="text-neutral-600">
+        {session?.user.affiliation} · {session?.user.role}
+        {session?.user.studentId ? ` · ${session.user.studentId}` : ''}
+      </Text>
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+      <Pressable onPress={signOut} className="self-start rounded-lg border border-neutral-300 px-4 py-2">
+        <Text>Cerrar sesión</Text>
+      </Pressable>
+    </View>
+  )
+}

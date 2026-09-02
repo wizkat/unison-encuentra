@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          affiliation: Database["public"]["Enums"]["affiliation"]
           created_at: string
           display_name: string
           email: string
@@ -26,6 +27,7 @@ export type Database = {
           upn: string | null
         }
         Insert: {
+          affiliation?: Database["public"]["Enums"]["affiliation"]
           created_at?: string
           display_name: string
           email: string
@@ -36,6 +38,7 @@ export type Database = {
           upn?: string | null
         }
         Update: {
+          affiliation?: Database["public"]["Enums"]["affiliation"]
           created_at?: string
           display_name?: string
           email?: string
@@ -57,10 +60,12 @@ export type Database = {
         Returns: Database["public"]["Enums"]["user_role"]
       }
       is_admin: { Args: never; Returns: boolean }
+      is_operator: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
     }
     Enums: {
-      user_role: "student" | "faculty" | "staff" | "admin"
+      affiliation: "student" | "employee"
+      user_role: "member" | "operator" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -188,7 +193,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      user_role: ["student", "faculty", "staff", "admin"],
+      affiliation: ["student", "employee"],
+      user_role: ["member", "operator", "admin"],
     },
   },
 } as const
