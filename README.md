@@ -18,3 +18,7 @@
 - Admin01
    - admin01@unisoftannonuseraleeas.onmicrosoft.com
    - Ruda167074pa
+
+- alumno01
+   - a237485734@unisoftannonuseraleeas.onmicrosoft.com
+   - Dayo971793df
