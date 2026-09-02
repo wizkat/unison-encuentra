@@ -14,6 +14,9 @@
    npx expo start
    ```
 
+3. Abrir [http://localhost:8081](http://localhost:8081) en el navegador.
+
+
 ### Usuarios
 - Admin01
    - admin01@unisoftannonuseraleeas.onmicrosoft.com
