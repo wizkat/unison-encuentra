@@ -29,23 +29,18 @@ export const SessionProvider = ({
   useEffect(() => {
     let active = true
 
-    provider
-      .getSession()
-      .then((result) => {
-        if (active) setSession(result)
-      })
-      .catch((e) => {
-        if (active) setError(e instanceof Error ? e.message : 'Error de sesión')
-      })
-      .finally(() => {
-        if (active) setLoading(false)
-      })
-
-    const unsubscribe = provider.onSessionChange((result) => {
-      if (!active) return
-      setSession(result)
-      setLoading(false)
-    })
+    const unsubscribe = provider.onSessionChange(
+      (result) => {
+        if (!active) return
+        setSession(result)
+        setLoading(false)
+      },
+      (e) => {
+        if (!active) return
+        setError(e.message)
+        setLoading(false)
+      },
+    )
 
     return () => {
       active = false
@@ -62,12 +57,13 @@ export const SessionProvider = ({
       try {
         await provider.signIn()
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'No pudimos iniciar sesión')
+        setError(e instanceof Error ? e.message : 'No logramos iniciar sesión')
       }
     },
     signOut: async () => {
       await provider.signOut()
       setSession(null)
+      setError(null)
     },
   }
 

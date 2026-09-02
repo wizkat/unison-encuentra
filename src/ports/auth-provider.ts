@@ -14,5 +14,8 @@ export interface AuthProvider {
   signIn(): Promise<void>
   signOut(): Promise<void>
   getSession(): Promise<Session | null>
-  onSessionChange(listener: (session: Session | null) => void): () => void
+  onSessionChange(
+    listener: (session: Session | null) => void,
+    onError?: (error: Error) => void,
+  ): () => void
 }

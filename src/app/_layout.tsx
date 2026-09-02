@@ -1,7 +1,7 @@
 import '@/global.css'
+import { SessionProvider, useSession } from '@/providers/session-provider'
 import { Redirect, Stack, usePathname } from 'expo-router'
-import { ActivityIndicator, Text, View } from 'react-native'
-import { SessionProvider, useSession } from '../providers/session-provider'
+import { ActivityIndicator, Pressable, Text, View } from 'react-native'
 
 export default function RootLayout() {
   return (
@@ -12,7 +12,7 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  const { session, loading, error } = useSession()
+  const { session, loading, error, signOut } = useSession()
   const pathname = usePathname()
 
   if (loading) {
@@ -25,8 +25,11 @@ function RootNavigator() {
 
   if (error) {
     return (
-      <View className="flex-1 items-center justify-center bg-white p-8">
+      <View className="flex-1 items-center justify-center gap-4 bg-white p-8">
         <Text className="text-center text-red-600">{error}</Text>
+        <Pressable onPress={signOut} className="rounded-lg border border-neutral-300 px-4 py-2">
+          <Text>Volver a intentar</Text>
+        </Pressable>
       </View>
     )
   }

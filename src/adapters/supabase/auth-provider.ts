@@ -7,6 +7,11 @@ type ProfileRow = Database['public']['Tables']['profiles']['Row']
 
 const EXPECTED_TENANT_ID = process.env.EXPO_PUBLIC_ENTRA_TENANT_ID
 
+// Falla al cargar el módulo, no a media autenticación.
+if (!EXPECTED_TENANT_ID && process.env.NODE_ENV === 'production') {
+  throw new Error('EXPO_PUBLIC_ENTRA_TENANT_ID es obligatorio en producción')
+}
+
 export class SupabaseAuthProvider implements AuthProvider {
   constructor(private readonly db: SupabaseClient<Database>) {}
 
@@ -35,19 +40,26 @@ export class SupabaseAuthProvider implements AuthProvider {
     return this.buildSession(data.session)
   }
 
-  onSessionChange(listener: (session: Session | null) => void): () => void {
+  onSessionChange(
+    listener: (session: Session | null) => void,
+    onError?: (error: Error) => void,
+  ): () => void {
     const { data } = this.db.auth.onAuthStateChange((_event, supabaseSession) => {
       if (!supabaseSession) {
         listener(null)
         return
       }
 
+      // El callback corre sosteniendo el lock interno de supabase-js.
+      // Cualquier await de Supabase aquí provoca un deadlock silencioso,
+      // así que el trabajo real se difiere al siguiente ciclo del loop.
       setTimeout(() => {
         this.buildSession(supabaseSession)
           .then(listener)
-          .catch(() => {
+          .catch((e) => {
             void this.db.auth.signOut()
             listener(null)
+            onError?.(e instanceof Error ? e : new Error('Error de sesión'))
           })
       }, 0)
     })
@@ -55,15 +67,18 @@ export class SupabaseAuthProvider implements AuthProvider {
     return () => data.subscription.unsubscribe()
   }
 
+  /** Combina el token de Entra con el perfil almacenado en la base. */
   private async buildSession(session: SupabaseSession): Promise<Session> {
     const tenantId = readTenantId(session)
 
+    // El guardia va antes de tocar la base: si la cuenta no pertenece
+    // al tenant esperado, no hay razón para consultar nada.
     if (EXPECTED_TENANT_ID && tenantId !== EXPECTED_TENANT_ID) {
       await this.db.auth.signOut()
       throw new UnauthorizedError('Usa tu cuenta institucional para entrar')
     }
 
-    const profile = await this.fetchProfile(session.user.id)
+    const profile = await this.fetchProfile()
 
     return {
       user: toDomainUser(profile, tenantId),
@@ -72,28 +87,27 @@ export class SupabaseAuthProvider implements AuthProvider {
     }
   }
 
-  private async fetchProfile(id: string, attempts = 3): Promise<ProfileRow> {
-    for (let attempt = 0; attempt < attempts; attempt++) {
-      const { data, error } = await this.db
-        .from('profiles')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle()
+  /**
+   * RPC en vez de select: la función crea el perfil si no existe,
+   * lo que elimina la carrera con el trigger en el primer inicio
+   * de sesión y repara cuentas sin perfil. El id sale de auth.uid()
+   * del lado del servidor, por eso no recibe argumentos.
+   */
+  private async fetchProfile(): Promise<ProfileRow> {
+    const { data, error } = await this.db.rpc('get_or_create_profile').single()
 
-      if (error) throw new InfrastructureError('No pudimos cargar tu perfil', error)
-      if (data) return data
+    if (error) throw new InfrastructureError('No pudimos cargar tu perfil', error)
+    if (!data) throw new InfrastructureError('No pudimos cargar tu perfil')
 
-      await delay(200 * (attempt + 1))
-    }
-
-    throw new InfrastructureError(
-      'Tu cuenta se creó pero el perfil no está listo. Vuelve a intentar en un momento.',
-    )
+    return data
   }
 }
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
+/**
+ * El tenant id viene en los claims de Entra, no en las columnas de
+ * Supabase. Es la verificación fuerte de pertenencia institucional:
+ * lo emite Microsoft y no se puede falsificar.
+ */
 const readTenantId = (session: SupabaseSession): string =>
   session.user.user_metadata?.custom_claims?.tid ?? ''
 
