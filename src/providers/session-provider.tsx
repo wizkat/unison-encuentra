@@ -1,7 +1,7 @@
+import { SupabaseAuthProvider } from '@/adapters/supabase/auth-provider'
+import { supabase } from '@/adapters/supabase/client'
+import type { AuthProvider, Session } from '@/ports'
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { SupabaseAuthProvider } from '../adapters/supabase/auth-provider'
-import { supabase } from '../adapters/supabase/client'
-import type { AuthProvider, Session } from '../ports'
 
 interface SessionState {
   session: Session | null

@@ -1,6 +1,6 @@
+import '@/global.css'
 import { Redirect, Stack, usePathname } from 'expo-router'
 import { ActivityIndicator, Text, View } from 'react-native'
-import '../global.css'
 import { SessionProvider, useSession } from '../providers/session-provider'
 
 export default function RootLayout() {

@@ -1,6 +1,6 @@
+import { useSession } from '@/providers/session-provider'
 import { useState } from 'react'
 import { ActivityIndicator, Pressable, Text, View } from 'react-native'
-import { useSession } from '../providers/session-provider'
 
 export default function SignIn() {
   const { signIn, error } = useSession()

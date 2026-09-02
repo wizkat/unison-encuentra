@@ -1,3 +1,5 @@
+import type { UserId } from './ids'
+
 export const AFFILIATIONS = ['student', 'employee'] as const
 export type Affiliation = (typeof AFFILIATIONS)[number]
 

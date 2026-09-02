@@ -1,5 +1,5 @@
+import { useSession } from '@/providers/session-provider'
 import { Pressable, Text, View } from 'react-native'
-import { useSession } from '../providers/session-provider'
 
 export default function Home() {
   const { session, signOut } = useSession()

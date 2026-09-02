@@ -1,4 +1,4 @@
-import type { User } from '../domain'
+import type { User } from '@/domain'
 
 export interface Session {
   user: User
