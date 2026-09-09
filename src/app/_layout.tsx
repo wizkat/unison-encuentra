@@ -44,8 +44,18 @@ function RootNavigator() {
 
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ title: 'Objetos perdidos' }} />
+      <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="item/[id]"
+        options={{
+          title: 'Detalle del objeto',
+          headerStyle: { backgroundColor: '#052646' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: '600' },
+          headerBackTitle: 'Atrás',
+        }}
+      />
     </Stack>
   )
 }
