@@ -116,41 +116,167 @@ export default function Dashboard() {
           />
         </SafeAreaView>
 
-        <ScrollView className="flex-1 p-4" contentContainerStyle={{ paddingBottom: 40 }}>
-          <Text className="mb-4 text-base text-admin-text">
-            PANEL DE ADMINISTRACIÓN: <Text className="font-normal text-admin-muted">Gestión de Reportes</Text>
-          </Text>
+        <ScrollView
+  className="flex-1 p-4"
+  contentContainerStyle={{ paddingBottom: 40 }}
+>
+  {activeNav === 'overview' && (
+    <>
+      <Text className="mb-4 text-base text-admin-text">
+        PANEL DE ADMINISTRACIÓN:{' '}
+        <Text className="font-normal text-admin-muted">
+          Gestión de Reportes
+        </Text>
+      </Text>
 
-          <View className={isStackedLayout ? 'gap-4' : 'flex-row gap-4'}>
-            <View className="flex-1">
-              <FilterCard
-                search={search}
-                onSearchChange={setSearch}
-                categoryOptions={categoryOptions}
-                categoryValue={category}
-                onCategoryChange={setCategory}
-                locationOptions={locationOptions}
-                locationValue={location}
-                onLocationChange={setLocation}
-                date={date}
-                onDateChange={setDate}
-                onFilter={() => {}}
-              />
+      <View
+        className={
+          isStackedLayout
+            ? 'gap-4'
+            : 'flex-row gap-4'
+        }
+      >
+        <View className="flex-1">
+          <FilterCard
+            search={search}
+            onSearchChange={setSearch}
+            categoryOptions={categoryOptions}
+            categoryValue={category}
+            onCategoryChange={setCategory}
+            locationOptions={locationOptions}
+            locationValue={location}
+            onLocationChange={setLocation}
+            date={date}
+            onDateChange={setDate}
+            onFilter={() => {}}
+          />
 
-              {loading ? (
-                <View className="items-center py-10">
-                  <ActivityIndicator color="#003366" />
-                </View>
-              ) : (
-                <ReportsTable items={filtered} onEdit={handleEdit} onDelete={handleDelete} />
-              )}
+          {loading ? (
+            <View className="items-center py-10">
+              <ActivityIndicator color="#003366" />
             </View>
+          ) : (
+            <ReportsTable
+              items={filtered}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+        </View>
 
-            <View className={isStackedLayout ? undefined : 'w-[280px]'}>
-              <ActivityFeed items={allItems} />
-            </View>
-          </View>
-        </ScrollView>
+        <View
+          className={
+            isStackedLayout
+              ? undefined
+              : 'w-[280px]'
+          }
+        >
+          <ActivityFeed items={allItems} />
+        </View>
+      </View>
+    </>
+  )}
+
+  {activeNav === 'lost' && (
+    <View>
+      <Text className="mb-4 text-base text-admin-text">
+        PANEL DE ADMINISTRACIÓN:{' '}
+        <Text className="font-normal text-admin-muted">
+          Objetos Perdidos
+        </Text>
+      </Text>
+
+      <View className="rounded-xl border border-admin-border bg-white p-8">
+        <Text className="text-xl font-bold text-admin-primary">
+          📦 Objetos Perdidos
+        </Text>
+
+        <Text className="mt-3 text-sm text-admin-muted">
+          Aquí se mostrarán todos los reportes de objetos perdidos.
+        </Text>
+
+        <Text className="mt-6 text-sm text-admin-muted">
+          Esta sección se encuentra en desarrollo.
+        </Text>
+      </View>
+    </View>
+  )}
+
+  {activeNav === 'found' && (
+    <View>
+      <Text className="mb-4 text-base text-admin-text">
+        PANEL DE ADMINISTRACIÓN:{' '}
+        <Text className="font-normal text-admin-muted">
+          Objetos Encontrados
+        </Text>
+      </Text>
+
+      <View className="rounded-xl border border-admin-border bg-white p-8">
+        <Text className="text-xl font-bold text-admin-primary">
+          🤝 Objetos Encontrados
+        </Text>
+
+        <Text className="mt-3 text-sm text-admin-muted">
+          Aquí se mostrarán todos los reportes de objetos encontrados.
+        </Text>
+
+        <Text className="mt-6 text-sm text-admin-muted">
+          Esta sección se encuentra en desarrollo.
+        </Text>
+      </View>
+    </View>
+  )}
+
+  {activeNav === 'users' && (
+    <View>
+      <Text className="mb-4 text-base text-admin-text">
+        PANEL DE ADMINISTRACIÓN:{' '}
+        <Text className="font-normal text-admin-muted">
+          Gestión de Usuarios
+        </Text>
+      </Text>
+
+      <View className="rounded-xl border border-admin-border bg-white p-8">
+        <Text className="text-xl font-bold text-admin-primary">
+          👥 Usuarios
+        </Text>
+
+        <Text className="mt-3 text-sm text-admin-muted">
+          Aquí se administrarán los usuarios de Encuentra UNISON.
+        </Text>
+
+        <Text className="mt-6 text-sm text-admin-muted">
+          Esta sección se encuentra en desarrollo.
+        </Text>
+      </View>
+    </View>
+  )}
+
+  {activeNav === 'settings' && (
+    <View>
+      <Text className="mb-4 text-base text-admin-text">
+        PANEL DE ADMINISTRACIÓN:{' '}
+        <Text className="font-normal text-admin-muted">
+          Configuración
+        </Text>
+      </Text>
+
+      <View className="rounded-xl border border-admin-border bg-white p-8">
+        <Text className="text-xl font-bold text-admin-primary">
+          ⚙️ Configuración
+        </Text>
+
+        <Text className="mt-3 text-sm text-admin-muted">
+          Aquí se mostrarán las opciones de configuración del sistema.
+        </Text>
+
+        <Text className="mt-6 text-sm text-admin-muted">
+          Esta sección se encuentra en desarrollo.
+        </Text>
+      </View>
+    </View>
+  )}
+</ScrollView>
       </View>
     </View>
   )
